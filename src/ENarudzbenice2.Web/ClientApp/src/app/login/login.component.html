@@ -1,0 +1,41 @@
+<div fxFill fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1.5rem" class="mat-typography" >
+  <div>
+    <h1 fxLayoutAlign="center">E-Narudžbenice 2</h1>
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+      <h4 class="version">v{{version}}</h4>
+    </div>
+  </div>
+  <div class="login-container" fxLayout="row" fxLayoutAlign="center">
+    <mat-card fxFlex="90%" fxFlex.sm="66%" fxFlex.md="50%" fxFlex.gt-md="33%" class="login-box">
+      <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
+        <div class="login-error" [hidden]="!error || isLoading">
+          Pogrešno korisničko ime i/ili lozinka.
+        </div>
+        <br/>
+        <div fxLayout="column">
+          <mat-form-field>
+            <input type="text" matInput formControlName="username" autocomplete="username"
+                   [placeholder]="'Korisničko ime'"/>
+            <mat-error *ngIf="!!loginForm.controls.username.valid || !!loginForm.controls.username.untouched">
+              <span>Korisničko ime je obavezno.</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <input type="password" matInput formControlName="password" autocomplete="current-password"
+                   [placeholder]="'Lozinka'" required/>
+            <mat-error *ngIf="!!loginForm.controls.password.valid || !!loginForm.controls.password.untouched">
+              <span>Lozinka je obavezna.</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-slide-toggle color="primary" formControlName="remember">Zapamti me</mat-slide-toggle>
+          <br/>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
+            <app-loader class="inline-loader" [isLoading]="isLoading"></app-loader>
+            <span>Prijava</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
