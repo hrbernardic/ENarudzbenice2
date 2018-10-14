@@ -1,0 +1,547 @@
+﻿{
+  "x-generator": "NSwag v11.20.1.0 (NJsonSchema v9.11.0.0 (Newtonsoft.Json v11.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ENarudzbenice 2 API",
+    "version": "1.0.0"
+  },
+  "consumes": [
+    "application/json-patch+json",
+    "application/json",
+    "text/json",
+    "application/*+json"
+  ],
+  "paths": {
+    "/api/Adrese": {
+      "get": {
+        "tags": ["Adrese"],
+        "operationId": "Adrese_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "nullable": true,
+                  "items": {
+                    "$ref": "#/components/schemas/Adresa"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/CreateUser": {
+      "post": {
+        "tags": ["Auth"],
+        "operationId": "Auth_CreateUser",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "file"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/Login": {
+      "post": {
+        "tags": ["Auth"],
+        "operationId": "Auth_Login",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/LoginDto"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Djelatnosti": {
+      "get": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "nullable": true,
+                  "items": {
+                    "$ref": "#/components/schemas/Djelatnost"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_Create",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request2"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "file"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Djelatnosti/{id}": {
+      "get": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "file"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request3"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "file"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "file"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Adresa": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SifarnikEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SifarnikEntity": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "naziv": {
+                "type": "string",
+                "nullable": true
+              },
+              "sifra": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "BaseEntity": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "Request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "LoginDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "token": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "LoginCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Djelatnost": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SifarnikEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "radnik": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/User"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "User": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IdentityUserOfGuid"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ime": {
+                "type": "string",
+                "nullable": true
+              },
+              "prezime": {
+                "type": "string",
+                "nullable": true
+              },
+              "aktivan": {
+                "type": "boolean"
+              },
+              "datumIzmjene": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "datumIzrade": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "prikazIme": {
+                "type": "string",
+                "nullable": true
+              },
+              "tim": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Tim"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Tim": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SifarnikEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "radnoVrijeme": {
+                "type": "string",
+                "nullable": true
+              },
+              "kontaktBroj": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "godisnji": {
+                "type": "string",
+                "nullable": true
+              },
+              "aktivan": {
+                "type": "boolean"
+              },
+              "adresaDostava": {
+                "type": "string",
+                "nullable": true
+              },
+              "adresa": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Adresa"
+                  }
+                ]
+              },
+              "djelatnost": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Djelatnost"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "IdentityUserOfGuid": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Request2": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "naziv": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Request3": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+<div class="container">
+  <mat-card>
+    <h1>
+      <mat-card-title>ENarudžbenice</mat-card-title>
+    </h1>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item *ngFor="let adresa of adrese | async">{{adresa.sifra}} - {{adresa.naziv}}</mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>

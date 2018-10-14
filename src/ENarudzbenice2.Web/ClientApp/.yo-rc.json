@@ -1,0 +1,20 @@
+{
+  "generator-ngx-rocket": {
+    "version": "5.2.0",
+    "props": {
+      "location": "path",
+      "appName": "enarudzbenice2-client",
+      "target": ["web"],
+      "pwa": false,
+      "ui": "material",
+      "layout": "side-menu",
+      "auth": true,
+      "lazy": false,
+      "angulartics": false,
+      "prettier": true,
+      "projectName": "enarudzbenice-2-client",
+      "packageManager": "npm",
+      "mobile": []
+    }
+  }
+}
