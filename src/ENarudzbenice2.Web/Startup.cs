@@ -1,7 +1,10 @@
 using System;
 using System.IO;
+using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using ENarudzbenice2.Application.Features.Djelatnosti.Requests;
 using ENarudzbenice2.Application.Features.Djelatnosti.Validations;
 using ENarudzbenice2.Application.Infrastructure;
@@ -14,8 +17,10 @@ using MediatR.Pipeline;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -97,6 +102,7 @@ namespace ENarudzbenice2.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseWebSockets();
             }
             else
             {
@@ -127,6 +133,31 @@ namespace ENarudzbenice2.Web
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
+
+            if (env.IsDevelopment())
+            {
+                app.Use(async (context, next) =>
+                {
+                    if (context.Request.Path.ToString().EndsWith("/websocket"))
+                    {
+                        if (context.WebSockets.IsWebSocketRequest)
+                        {
+
+                            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                            await Echo(context, webSocket);
+                        }
+                        else
+                        {
+                            context.Response.StatusCode = 400;
+                        }
+                    }
+                    else
+                    {
+                        await next();
+                    }
+
+                });
+            }
 
             app.UseSpa(spa =>
             {
@@ -165,6 +196,21 @@ namespace ENarudzbenice2.Web
             var code = generator.GenerateFile();
 
             File.WriteAllText($"{Environment.CurrentDirectory}/ClientApp/src/app/shared/enarudzbenice2-api.ts", code);
+        }
+
+        private async Task Echo(HttpContext context, WebSocket webSocket)
+        {
+            var buffer = new byte[1024 * 4];
+            WebSocketReceiveResult wsresult = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer),
+                CancellationToken.None);
+            while (!wsresult.CloseStatus.HasValue)
+            {
+                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, wsresult.Count), wsresult.MessageType,
+                    wsresult.EndOfMessage, CancellationToken.None);
+                wsresult = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            }
+            await webSocket.CloseAsync(wsresult.CloseStatus.Value, wsresult.CloseStatusDescription,
+                CancellationToken.None);
         }
     }
 }

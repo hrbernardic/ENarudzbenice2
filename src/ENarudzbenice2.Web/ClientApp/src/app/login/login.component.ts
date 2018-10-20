@@ -9,7 +9,7 @@ import { Logger, AuthenticationService } from '@app/core';
 const log = new Logger('Login');
 
 @Component({
-  selector: 'app-login',
+  selector: 'en2-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

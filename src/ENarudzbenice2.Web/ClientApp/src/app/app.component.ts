@@ -10,7 +10,7 @@ import { Logger } from '@app/core';
 const log = new Logger('App');
 
 @Component({
-  selector: 'app-root',
+  selector: 'en2-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

@@ -1,13 +1,12 @@
 import { Title } from '@angular/platform-browser';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ObservableMedia } from '@angular/flex-layout';
 
 import { AuthenticationService } from '@app/core';
-import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
-  selector: 'app-shell',
+  selector: 'en2-shell',
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss']
 })
@@ -22,7 +21,7 @@ export class ShellComponent implements OnInit {
   ngOnInit() {}
 
   logout() {
-    this.authenticationService.logout().subscribe(() => this.router.navigate(['/login'], { replaceUrl: true }));
+    this.authenticationService.logout().subscribe(() => this.router.navigate(['/Login'], { replaceUrl: true }));
   }
 
   get username(): string | null {
