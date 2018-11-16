@@ -262,6 +262,12 @@ export class AuthClient implements IAuthClient {
 }
 
 export interface IDjelatnostiClient {
+  query(
+    pageNumber: number | undefined,
+    pageSize: number | undefined,
+    sortProperty: string | null | undefined,
+    sortOrder: string | null | undefined
+  ): Observable<QueryResultOfDjelatnost | null>;
   getAll(): Observable<Djelatnost[] | null>;
   create(request: Request): Observable<FileResponse>;
   get(id: string): Observable<FileResponse>;
@@ -283,6 +289,83 @@ export class DjelatnostiClient implements IDjelatnostiClient {
   ) {
     this.http = http;
     this.baseUrl = baseUrl ? baseUrl : '';
+  }
+
+  query(
+    pageNumber: number | undefined,
+    pageSize: number | undefined,
+    sortProperty: string | null | undefined,
+    sortOrder: string | null | undefined
+  ): Observable<QueryResultOfDjelatnost | null> {
+    let url_ = this.baseUrl + '/api/Djelatnosti/Query?';
+    if (pageNumber === null) throw new Error("The parameter 'pageNumber' cannot be null.");
+    else if (pageNumber !== undefined) url_ += 'pageNumber=' + encodeURIComponent('' + pageNumber) + '&';
+    if (pageSize === null) throw new Error("The parameter 'pageSize' cannot be null.");
+    else if (pageSize !== undefined) url_ += 'pageSize=' + encodeURIComponent('' + pageSize) + '&';
+    if (sortProperty !== undefined) url_ += 'sortProperty=' + encodeURIComponent('' + sortProperty) + '&';
+    if (sortOrder !== undefined) url_ += 'sortOrder=' + encodeURIComponent('' + sortOrder) + '&';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        Accept: 'application/json'
+      })
+    };
+
+    return this.http
+      .request('get', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processQuery(response_);
+        })
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processQuery(<any>response_);
+            } catch (e) {
+              return <Observable<QueryResultOfDjelatnost | null>>(<any>_observableThrow(e));
+            }
+          } else return <Observable<QueryResultOfDjelatnost | null>>(<any>_observableThrow(response_));
+        })
+      );
+  }
+
+  protected processQuery(response: HttpResponseBase): Observable<QueryResultOfDjelatnost | null> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (<any>response).error instanceof Blob
+          ? (<any>response).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap(_responseText => {
+          let result200: any = null;
+          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+          result200 = resultData200 ? QueryResultOfDjelatnost.fromJS(resultData200) : <any>null;
+          return _observableOf(result200);
+        })
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap(_responseText => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        })
+      );
+    }
+    return _observableOf<QueryResultOfDjelatnost | null>(<any>null);
   }
 
   getAll(): Observable<Djelatnost[] | null> {
@@ -847,6 +930,92 @@ export class UserLoginCommand implements IUserLoginCommand {
 export interface IUserLoginCommand {
   username?: string | undefined;
   password?: string | undefined;
+}
+
+export class QueryParametersBase implements IQueryParametersBase {
+  pageIndex?: number;
+  pageCount?: number;
+  pageSize?: number;
+  rowCount?: number;
+
+  constructor(data?: IQueryParametersBase) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+      }
+    }
+  }
+
+  init(data?: any) {
+    if (data) {
+      this.pageIndex = data['pageIndex'];
+      this.pageCount = data['pageCount'];
+      this.pageSize = data['pageSize'];
+      this.rowCount = data['rowCount'];
+    }
+  }
+
+  static fromJS(data: any): QueryParametersBase {
+    data = typeof data === 'object' ? data : {};
+    let result = new QueryParametersBase();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    data['pageIndex'] = this.pageIndex;
+    data['pageCount'] = this.pageCount;
+    data['pageSize'] = this.pageSize;
+    data['rowCount'] = this.rowCount;
+    return data;
+  }
+}
+
+export interface IQueryParametersBase {
+  pageIndex?: number;
+  pageCount?: number;
+  pageSize?: number;
+  rowCount?: number;
+}
+
+export class QueryResultOfDjelatnost extends QueryParametersBase implements IQueryResultOfDjelatnost {
+  results?: Djelatnost[] | undefined;
+
+  constructor(data?: IQueryResultOfDjelatnost) {
+    super(data);
+  }
+
+  init(data?: any) {
+    super.init(data);
+    if (data) {
+      if (data['results'] && data['results'].constructor === Array) {
+        this.results = [];
+        for (let item of data['results']) this.results.push(Djelatnost.fromJS(item));
+      }
+    }
+  }
+
+  static fromJS(data: any): QueryResultOfDjelatnost {
+    data = typeof data === 'object' ? data : {};
+    let result = new QueryResultOfDjelatnost();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    if (this.results && this.results.constructor === Array) {
+      data['results'] = [];
+      for (let item of this.results) data['results'].push(item.toJSON());
+    }
+    super.toJSON(data);
+    return data;
+  }
+}
+
+export interface IQueryResultOfDjelatnost extends IQueryParametersBase {
+  results?: Djelatnost[] | undefined;
 }
 
 export class Djelatnost extends SifarnikEntity implements IDjelatnost {

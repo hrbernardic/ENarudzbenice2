@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DDFramework;
 using ENarudzbenice2.Application.Features.Djelatnosti.Requests;
 using ENarudzbenice2.Domain.Entities;
 using ENarudzbenice2.Web.Infrastructure;
@@ -12,6 +13,19 @@ namespace ENarudzbenice2.Web.Controllers
     [ApiController]
     public class DjelatnostiController : BaseController
     {
+        // GET api/djelatnosti
+        [HttpGet("Query")]
+        public Task<QueryResult<Djelatnost>> Query([FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 0, [FromQuery]string sortProperty = null, [FromQuery]string sortOrder = null)
+        {
+            return Mediator.Send(new DjelatnostQuery.Request
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SortProperty = sortProperty,
+                SortOrder = sortOrder
+            });
+        }
+
         // GET api/djelatnosti
         [HttpGet]
         public Task<List<Djelatnost>> GetAll()

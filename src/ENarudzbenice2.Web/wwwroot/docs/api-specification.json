@@ -14,9 +14,7 @@
   "paths": {
     "/api/Adrese": {
       "get": {
-        "tags": [
-          "Adrese"
-        ],
+        "tags": ["Adrese"],
         "operationId": "Adrese_GetAll",
         "responses": {
           "200": {
@@ -38,9 +36,7 @@
     },
     "/api/Auth/CreateUser": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "operationId": "Auth_CreateUser",
         "requestBody": {
           "x-name": "command",
@@ -70,9 +66,7 @@
     },
     "/api/Auth/Login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "operationId": "Auth_Login",
         "requestBody": {
           "x-name": "command",
@@ -105,11 +99,72 @@
         }
       }
     },
+    "/api/Djelatnosti/Query": {
+      "get": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_Query",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1,
+            "default": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2,
+            "default": 0
+          },
+          {
+            "name": "sortProperty",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/QueryResultOfDjelatnost"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Djelatnosti": {
       "get": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_GetAll",
         "responses": {
           "200": {
@@ -129,9 +184,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Create",
         "requestBody": {
           "x-name": "request",
@@ -161,9 +214,7 @@
     },
     "/api/Djelatnosti/{id}": {
       "get": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Get",
         "parameters": [
           {
@@ -191,9 +242,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Update",
         "parameters": [
           {
@@ -233,9 +282,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Delete",
         "parameters": [
           {
@@ -365,6 +412,26 @@
             "nullable": true
           }
         }
+      },
+      "QueryResultOfDjelatnost": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/QueryParametersBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "results": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Djelatnost"
+                }
+              }
+            }
+          }
+        ]
       },
       "Djelatnost": {
         "allOf": [
@@ -541,6 +608,28 @@
             "type": "boolean"
           },
           "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "QueryParametersBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowCount": {
             "type": "integer",
             "format": "int32"
           }

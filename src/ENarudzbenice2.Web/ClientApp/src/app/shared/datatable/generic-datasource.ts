@@ -1,13 +1,15 @@
 import { DataSource, CollectionViewer } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { finalize, catchError, delay } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, timer } from 'rxjs';
+import { finalize, catchError, delay, map, takeUntil, tap } from 'rxjs/operators';
 
 export class GenericDatasource extends DataSource<any> {
-  private dataSubject = new BehaviorSubject<any[]>([]);
+  private queryResponseSubject = new BehaviorSubject<any>({});
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
+  // tslint:disable-next-line:member-ordering
+  public queryResponse$ = this.queryResponseSubject.asObservable();
   // tslint:disable-next-line:member-ordering
   public loading$ = this.loadingSubject.asObservable();
 
@@ -16,22 +18,56 @@ export class GenericDatasource extends DataSource<any> {
   }
 
   connect(collectionViewer: CollectionViewer): Observable<any[]> {
-    return this.dataSubject.asObservable();
+    return this.queryResponseSubject.asObservable().pipe(map(queryResponse => queryResponse.results));
   }
 
   disconnect(collectionViewer: CollectionViewer): void {
-    this.dataSubject.complete();
+    this.queryResponseSubject.complete();
     this.loadingSubject.complete();
   }
 
-  loadData() {
-    this.loadingSubject.next(true);
-    this.dataService
-      .getAll()
-      .pipe(
-        catchError(() => of([])),
-        finalize(() => this.loadingSubject.next(false))
-      )
-      .subscribe(data => this.dataSubject.next(data));
+  loadData(pageIndex: number, pageSize: number, sortProperty: string, sortDirection: string) {
+    // timer(2000).pipe(
+    //   takeUntil(
+    //     this.dataService
+    //     .query(pageIndex, pageSize, sortProperty, sortDirection)
+    //     .pipe(
+    //       delay(5000),
+    //       catchError(() => of([])),
+    //       finalize(() => this.loadingSubject.next(false))
+    //     )
+    //     .subscribe(response => {
+    //       this.queryResponseSubject.next(response);
+    //       this.loadingSubject.next(false);
+    //     })
+    //   ),
+    //   // finalize(() => this.loadingSubject.next(true))
+    // ).subscribe(() => {
+    //   this.loadingSubject.next(true);
+    // });
+    const dataObservable$ = this.dataService
+      .query(pageIndex, pageSize, sortProperty, sortDirection)
+      .pipe
+      // delay(2000),
+      ();
+
+    dataObservable$.subscribe(response => {
+      this.queryResponseSubject.next(response);
+      this.loadingSubject.next(false);
+    });
+
+    timer(600)
+      .pipe(takeUntil(dataObservable$))
+      .subscribe(x => this.loadingSubject.next(true));
+
+    // this.loadingSubject.next(true);
+    // this.dataService
+    //   .query(pageIndex, pageSize, sortProperty, sortDirection)
+    //   .pipe(
+    //     // delay(1200),
+    //     catchError(() => of([])),
+    //     finalize(() => this.loadingSubject.next(false))
+    //   )
+    //   .subscribe(response => this.queryResponseSubject.next(response));
   }
 }

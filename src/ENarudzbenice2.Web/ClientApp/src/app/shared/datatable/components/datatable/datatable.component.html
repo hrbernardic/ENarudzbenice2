@@ -1,9 +1,7 @@
-<!-- <div  *ngIf="dataSource.loading$ | async; else progressBarPlaceholder">
-  <mat-progress-bar mode="indeterminate" color="accent" class="progress-bar" [@rowAnimation]=""></mat-progress-bar>
+<div  *ngIf="dataSource.loading$ | async; else progressBarPlaceholder">
+  <mat-progress-bar mode="indeterminate" color="accent" class="progress-bar"></mat-progress-bar>
 </div>
-<ng-template #progressBarPlaceholder><div class="progress-bar"></div></ng-template> -->
-
-
+<ng-template #progressBarPlaceholder><div class="progress-bar"></div></ng-template>
 
 <div class="mat-elevation-z4 table-container">
   <table mat-table class="data-table full-width-table" [dataSource]="dataSource" matSort aria-label="Elements">
@@ -19,24 +17,16 @@
         </td>
       </ng-container>
     </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns" [@rowAnimation]=""></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <div class="row-container">
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [@rowAnimation]=""></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </div>
   </table>
 
-  <div *ngIf="dataSource.loading$ | async" style="display: flex; justify-content: center; align-items: center; margin-top: 37px;">
-    <mat-progress-spinner
-      color="accent"
-      mode="indeterminate"
-      [diameter]="60">
-    </mat-progress-spinner>
-  </div>
-
   <mat-paginator #paginator
-      [length]="10"
-      [pageIndex]="0"
-      [pageSize]="50"
-      [pageSizeOptions]="[25, 50, 100, 250]">
+      [length]="(dataSource.queryResponse$ | async).rowCount"
+      [pageIndex]="(dataSource.queryResponse$ | async).pageIndex"
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]">
   </mat-paginator>
 </div>

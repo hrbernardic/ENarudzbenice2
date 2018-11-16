@@ -15,6 +15,8 @@ import { GenericDatasource } from '../../generic-datasource';
 import { rowAnimation } from '../../animations/row-animation';
 import { tutorialAnimation } from '../../animations/tutorial-animation';
 import { fadeInFadeOutAnimation } from '../../animations/fadein-fadeout-animation';
+import { tap } from 'rxjs/internal/operators/tap';
+import { merge } from 'rxjs/internal/observable/merge';
 
 @Component({
   selector: 'en2-datatable',
@@ -42,11 +44,24 @@ export class DatatableComponent implements OnInit, AfterContentInit, AfterViewIn
 
   ngOnInit() {
     this.dataSource = new GenericDatasource(this.dataService, this.paginator, this.sort);
-    this.dataSource.loadData();
+    this.dataSource.loadData(0, 10, '', '');
   }
 
   ngAfterViewInit() {
-    // this.tutorialAnimationState = false;
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+        tap(() =>
+          this.dataSource.loadData(
+            this.paginator.pageIndex,
+            this.paginator.pageSize,
+            this.sort.active,
+            this.sort.direction
+          )
+        )
+      )
+      .subscribe();
   }
 
   ngAfterContentInit() {
