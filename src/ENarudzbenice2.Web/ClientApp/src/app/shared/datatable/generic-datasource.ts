@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Observable, BehaviorSubject, of, timer } from 'rxjs';
 import { finalize, catchError, delay, map, takeUntil, tap, publishLast, refCount } from 'rxjs/operators';
+import { QueryRequest } from '../enarudzbenice2-api';
 
 export class GenericDatasource extends DataSource<any> {
   private queryResponseSubject = new BehaviorSubject<any>({});
@@ -26,9 +27,9 @@ export class GenericDatasource extends DataSource<any> {
     this.loadingSubject.complete();
   }
 
-  loadData(pageIndex: number, pageSize: number, sortProperty: string, sortDirection: string) {
+  loadData(queryRequest: QueryRequest) {
     const dataObservable$ = this.dataService
-      .query(pageIndex, pageSize, sortProperty, sortDirection)
+      .query(queryRequest)
       .pipe(publishLast())
       .refCount();
 

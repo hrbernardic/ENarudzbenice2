@@ -100,49 +100,21 @@
       }
     },
     "/api/Djelatnosti/Query": {
-      "get": {
+      "post": {
         "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Query",
-        "parameters": [
-          {
-            "name": "pageNumber",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "x-position": 1,
-            "default": 1
+        "requestBody": {
+          "x-name": "queryRequest",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
           },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "x-position": 2,
-            "default": 0
-          },
-          {
-            "name": "sortProperty",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 3
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 4
-          }
-        ],
+          "required": true,
+          "x-position": 1
+        },
         "responses": {
           "200": {
             "description": "",
@@ -152,7 +124,7 @@
                   "nullable": true,
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/QueryResultOfDjelatnost"
+                      "$ref": "#/components/schemas/QueryResponseOfDjelatnostBrowse"
                     }
                   ]
                 }
@@ -413,7 +385,7 @@
           }
         }
       },
-      "QueryResultOfDjelatnost": {
+      "QueryResponseOfDjelatnostBrowse": {
         "allOf": [
           {
             "$ref": "#/components/schemas/QueryParametersBase"
@@ -426,12 +398,82 @@
                 "type": "array",
                 "nullable": true,
                 "items": {
-                  "$ref": "#/components/schemas/Djelatnost"
+                  "$ref": "#/components/schemas/DjelatnostBrowse"
                 }
               }
             }
           }
         ]
+      },
+      "DjelatnostBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "naziv": {
+            "type": "string",
+            "nullable": true
+          },
+          "sifra": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "radnikPrikazIme": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "QueryParametersBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "QueryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sortProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "string",
+            "nullable": true
+          },
+          "globalFilter": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "Djelatnost": {
         "allOf": [
@@ -608,28 +650,6 @@
             "type": "boolean"
           },
           "accessFailedCount": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "QueryParametersBase": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "pageIndex": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "rowCount": {
             "type": "integer",
             "format": "int32"
           }

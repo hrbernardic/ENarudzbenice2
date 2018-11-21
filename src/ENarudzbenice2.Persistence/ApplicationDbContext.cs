@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using ENarudzbenice2.Domain.Entities;
 using ENarudzbenice2.Persistence.Extensions;
 using ENarudzbenice2.Identity;
@@ -13,6 +14,7 @@ namespace ENarudzbenice2.Persistence
         }
 
         public DbSet<Djelatnost> Djelatnosti { get; set; }
+        public DbQuery<DjelatnostBrowse> DjelatnostiBrowse { get; set; }
         public DbSet<Adresa> Adrese { get; set; }
         public DbSet<Lokacija> Lokacije { get; set; }
         public DbSet<Tim> Timovi { get; set; }
@@ -24,5 +26,13 @@ namespace ENarudzbenice2.Persistence
 
             modelBuilder.ApplyAllConfigurations();
         }
+    }
+
+    public class DjelatnostBrowse
+    {
+        public Guid Id { get; set; }
+        public string Naziv { get; set; }
+        public int Sifra { get; set; }
+        public string RadnikPrikazIme { get; set; }
     }
 }

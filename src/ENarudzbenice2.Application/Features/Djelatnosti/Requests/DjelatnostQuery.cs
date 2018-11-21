@@ -15,27 +15,29 @@ namespace ENarudzbenice2.Application.Features.Djelatnosti.Requests
 {
     public abstract class DjelatnostQuery
     {
-        public class Request : IRequest<QueryResult<Djelatnost>>
-        {
-            public int PageNumber { get; set; }
-            public int PageSize { get; set; }
-            public string SortProperty { get; set; }
-            public string SortOrder { get; set; }
-        }
+        public class Request : QueryRequest, IRequest<QueryResponse<DjelatnostBrowse>> { }
 
-        public class RequestHandler : BaseEfRequestHandler, IRequestHandler<Request, QueryResult<Djelatnost>>
+        public class RequestHandler : BaseEfRequestHandler, IRequestHandler<Request, QueryResponse<DjelatnostBrowse>>
         {
-            public RequestHandler(ApplicationDbContext context) : base(context)
-            {
-            }
+            public RequestHandler(ApplicationDbContext context) : base(context) { }
 
-            public Task<QueryResult<Djelatnost>> Handle(Request request, CancellationToken cancellationToken)
+            public Task<QueryResponse<DjelatnostBrowse>> Handle(Request request, CancellationToken cancellationToken)
             {
-                return _context.Djelatnosti
+                //var test = _context.DjelatnostiBrowse.s
+
+
+
+                return _context.DjelatnostiBrowse
                     .AsNoTracking()
+                    //.Where(x => x.Naziv.ToString().Contains(request.GlobalFilter) || x.Sifra.ToString().Contains(request.GlobalFilter))
+
+                    .CreateSearchQuery(request.GlobalFilter)
+                    //.SearchAllProperties(request.GlobalFilter)
                     .SortByPropertyString(request.SortProperty, request.SortOrder)
-                    .GetPagedAsync(request.PageNumber, request.PageSize);
+                    .GetPagedAsync(request.PageIndex, request.PageSize);
             }
+
+            
         }
     }
 }

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace DDFramework
 {
-    public class QueryResult<T> : QueryParametersBase
+    public class QueryResponse<T> : QueryParametersBase
     {
         public IList<T> Results { get; set; }
 
-        public QueryResult()
+        public QueryResponse()
         {
             Results = new List<T>();
         }

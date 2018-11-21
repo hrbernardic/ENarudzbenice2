@@ -6,7 +6,8 @@ import {
   AfterContentInit,
   ContentChildren,
   QueryList,
-  AfterViewInit
+  AfterViewInit,
+  ElementRef
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -17,6 +18,9 @@ import { tutorialAnimation } from '../../animations/tutorial-animation';
 import { fadeInFadeOutAnimation } from '../../animations/fadein-fadeout-animation';
 import { tap } from 'rxjs/internal/operators/tap';
 import { merge } from 'rxjs/internal/observable/merge';
+import { QueryRequest } from '@app/shared/enarudzbenice2-api';
+import { fromEvent } from 'rxjs/internal/observable/fromEvent';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'en2-datatable',
@@ -25,6 +29,8 @@ import { merge } from 'rxjs/internal/observable/merge';
   animations: [rowAnimation, fadeInFadeOutAnimation]
 })
 export class DatatableComponent implements OnInit, AfterContentInit, AfterViewInit {
+  @Input()
+  heading: string;
   @Input()
   dataService: any;
 
@@ -35,6 +41,8 @@ export class DatatableComponent implements OnInit, AfterContentInit, AfterViewIn
   paginator: MatPaginator;
   @ViewChild(MatSort)
   sort: MatSort;
+  @ViewChild('globalFilterInput')
+  globalFilterInput: ElementRef;
 
   dataSource: GenericDatasource;
   displayedColumns: string[];
@@ -44,27 +52,49 @@ export class DatatableComponent implements OnInit, AfterContentInit, AfterViewIn
 
   ngOnInit() {
     this.dataSource = new GenericDatasource(this.dataService, this.paginator, this.sort);
-    this.dataSource.loadData(0, 10, '', '');
+    this.dataSource.loadData(
+      new QueryRequest({
+        pageIndex: 0,
+        pageSize: 10,
+        sortProperty: '',
+        sortOrder: '',
+        globalFilter: ''
+      })
+    );
   }
 
   ngAfterViewInit() {
+    fromEvent(this.globalFilterInput.nativeElement, 'keyup')
+      .pipe(
+        debounceTime(150),
+        distinctUntilChanged(),
+        tap(() => {
+          this.paginator.pageIndex = 0;
+          this.loadData();
+        })
+      )
+      .subscribe();
+
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
     merge(this.sort.sortChange, this.paginator.page)
-      .pipe(
-        tap(() =>
-          this.dataSource.loadData(
-            this.paginator.pageIndex,
-            this.paginator.pageSize,
-            this.sort.active,
-            this.sort.direction
-          )
-        )
-      )
+      .pipe(tap(() => this.loadData()))
       .subscribe();
   }
 
   ngAfterContentInit() {
     this.displayedColumns = this.columns.map(c => c.prop);
+  }
+
+  loadData() {
+    this.dataSource.loadData(
+      new QueryRequest({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        sortProperty: this.sort.active,
+        sortOrder: this.sort.direction,
+        globalFilter: this.globalFilterInput.nativeElement.value
+      })
+    );
   }
 }

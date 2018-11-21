@@ -262,12 +262,7 @@ export class AuthClient implements IAuthClient {
 }
 
 export interface IDjelatnostiClient {
-  query(
-    pageNumber: number | undefined,
-    pageSize: number | undefined,
-    sortProperty: string | null | undefined,
-    sortOrder: string | null | undefined
-  ): Observable<QueryResultOfDjelatnost | null>;
+  query(queryRequest: QueryRequest): Observable<QueryResponseOfDjelatnostBrowse | null>;
   getAll(): Observable<Djelatnost[] | null>;
   create(request: Request): Observable<FileResponse>;
   get(id: string): Observable<FileResponse>;
@@ -291,31 +286,24 @@ export class DjelatnostiClient implements IDjelatnostiClient {
     this.baseUrl = baseUrl ? baseUrl : '';
   }
 
-  query(
-    pageNumber: number | undefined,
-    pageSize: number | undefined,
-    sortProperty: string | null | undefined,
-    sortOrder: string | null | undefined
-  ): Observable<QueryResultOfDjelatnost | null> {
-    let url_ = this.baseUrl + '/api/Djelatnosti/Query?';
-    if (pageNumber === null) throw new Error("The parameter 'pageNumber' cannot be null.");
-    else if (pageNumber !== undefined) url_ += 'pageNumber=' + encodeURIComponent('' + pageNumber) + '&';
-    if (pageSize === null) throw new Error("The parameter 'pageSize' cannot be null.");
-    else if (pageSize !== undefined) url_ += 'pageSize=' + encodeURIComponent('' + pageSize) + '&';
-    if (sortProperty !== undefined) url_ += 'sortProperty=' + encodeURIComponent('' + sortProperty) + '&';
-    if (sortOrder !== undefined) url_ += 'sortOrder=' + encodeURIComponent('' + sortOrder) + '&';
+  query(queryRequest: QueryRequest): Observable<QueryResponseOfDjelatnostBrowse | null> {
+    let url_ = this.baseUrl + '/api/Djelatnosti/Query';
     url_ = url_.replace(/[?&]$/, '');
 
+    const content_ = JSON.stringify(queryRequest);
+
     let options_: any = {
+      body: content_,
       observe: 'response',
       responseType: 'blob',
       headers: new HttpHeaders({
+        'Content-Type': 'application/json',
         Accept: 'application/json'
       })
     };
 
     return this.http
-      .request('get', url_, options_)
+      .request('post', url_, options_)
       .pipe(
         _observableMergeMap((response_: any) => {
           return this.processQuery(response_);
@@ -327,14 +315,14 @@ export class DjelatnostiClient implements IDjelatnostiClient {
             try {
               return this.processQuery(<any>response_);
             } catch (e) {
-              return <Observable<QueryResultOfDjelatnost | null>>(<any>_observableThrow(e));
+              return <Observable<QueryResponseOfDjelatnostBrowse | null>>(<any>_observableThrow(e));
             }
-          } else return <Observable<QueryResultOfDjelatnost | null>>(<any>_observableThrow(response_));
+          } else return <Observable<QueryResponseOfDjelatnostBrowse | null>>(<any>_observableThrow(response_));
         })
       );
   }
 
-  protected processQuery(response: HttpResponseBase): Observable<QueryResultOfDjelatnost | null> {
+  protected processQuery(response: HttpResponseBase): Observable<QueryResponseOfDjelatnostBrowse | null> {
     const status = response.status;
     const responseBlob =
       response instanceof HttpResponse
@@ -354,7 +342,7 @@ export class DjelatnostiClient implements IDjelatnostiClient {
         _observableMergeMap(_responseText => {
           let result200: any = null;
           let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = resultData200 ? QueryResultOfDjelatnost.fromJS(resultData200) : <any>null;
+          result200 = resultData200 ? QueryResponseOfDjelatnostBrowse.fromJS(resultData200) : <any>null;
           return _observableOf(result200);
         })
       );
@@ -365,7 +353,7 @@ export class DjelatnostiClient implements IDjelatnostiClient {
         })
       );
     }
-    return _observableOf<QueryResultOfDjelatnost | null>(<any>null);
+    return _observableOf<QueryResponseOfDjelatnostBrowse | null>(<any>null);
   }
 
   getAll(): Observable<Djelatnost[] | null> {
@@ -979,10 +967,10 @@ export interface IQueryParametersBase {
   rowCount?: number;
 }
 
-export class QueryResultOfDjelatnost extends QueryParametersBase implements IQueryResultOfDjelatnost {
-  results?: Djelatnost[] | undefined;
+export class QueryResponseOfDjelatnostBrowse extends QueryParametersBase implements IQueryResponseOfDjelatnostBrowse {
+  results?: DjelatnostBrowse[] | undefined;
 
-  constructor(data?: IQueryResultOfDjelatnost) {
+  constructor(data?: IQueryResponseOfDjelatnostBrowse) {
     super(data);
   }
 
@@ -991,14 +979,14 @@ export class QueryResultOfDjelatnost extends QueryParametersBase implements IQue
     if (data) {
       if (data['results'] && data['results'].constructor === Array) {
         this.results = [];
-        for (let item of data['results']) this.results.push(Djelatnost.fromJS(item));
+        for (let item of data['results']) this.results.push(DjelatnostBrowse.fromJS(item));
       }
     }
   }
 
-  static fromJS(data: any): QueryResultOfDjelatnost {
+  static fromJS(data: any): QueryResponseOfDjelatnostBrowse {
     data = typeof data === 'object' ? data : {};
-    let result = new QueryResultOfDjelatnost();
+    let result = new QueryResponseOfDjelatnostBrowse();
     result.init(data);
     return result;
   }
@@ -1014,8 +1002,106 @@ export class QueryResultOfDjelatnost extends QueryParametersBase implements IQue
   }
 }
 
-export interface IQueryResultOfDjelatnost extends IQueryParametersBase {
-  results?: Djelatnost[] | undefined;
+export interface IQueryResponseOfDjelatnostBrowse extends IQueryParametersBase {
+  results?: DjelatnostBrowse[] | undefined;
+}
+
+export class DjelatnostBrowse implements IDjelatnostBrowse {
+  id?: string;
+  naziv?: string | undefined;
+  sifra?: number;
+  radnikPrikazIme?: string | undefined;
+
+  constructor(data?: IDjelatnostBrowse) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+      }
+    }
+  }
+
+  init(data?: any) {
+    if (data) {
+      this.id = data['id'];
+      this.naziv = data['naziv'];
+      this.sifra = data['sifra'];
+      this.radnikPrikazIme = data['radnikPrikazIme'];
+    }
+  }
+
+  static fromJS(data: any): DjelatnostBrowse {
+    data = typeof data === 'object' ? data : {};
+    let result = new DjelatnostBrowse();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    data['id'] = this.id;
+    data['naziv'] = this.naziv;
+    data['sifra'] = this.sifra;
+    data['radnikPrikazIme'] = this.radnikPrikazIme;
+    return data;
+  }
+}
+
+export interface IDjelatnostBrowse {
+  id?: string;
+  naziv?: string | undefined;
+  sifra?: number;
+  radnikPrikazIme?: string | undefined;
+}
+
+export class QueryRequest implements IQueryRequest {
+  pageSize?: number;
+  pageIndex?: number;
+  sortProperty?: string | undefined;
+  sortOrder?: string | undefined;
+  globalFilter?: string | undefined;
+
+  constructor(data?: IQueryRequest) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+      }
+    }
+  }
+
+  init(data?: any) {
+    if (data) {
+      this.pageSize = data['pageSize'];
+      this.pageIndex = data['pageIndex'];
+      this.sortProperty = data['sortProperty'];
+      this.sortOrder = data['sortOrder'];
+      this.globalFilter = data['globalFilter'];
+    }
+  }
+
+  static fromJS(data: any): QueryRequest {
+    data = typeof data === 'object' ? data : {};
+    let result = new QueryRequest();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    data['pageSize'] = this.pageSize;
+    data['pageIndex'] = this.pageIndex;
+    data['sortProperty'] = this.sortProperty;
+    data['sortOrder'] = this.sortOrder;
+    data['globalFilter'] = this.globalFilter;
+    return data;
+  }
+}
+
+export interface IQueryRequest {
+  pageSize?: number;
+  pageIndex?: number;
+  sortProperty?: string | undefined;
+  sortOrder?: string | undefined;
+  globalFilter?: string | undefined;
 }
 
 export class Djelatnost extends SifarnikEntity implements IDjelatnost {

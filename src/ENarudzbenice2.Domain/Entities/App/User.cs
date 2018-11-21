@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using DDFramework;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
@@ -15,7 +16,8 @@ namespace ENarudzbenice2.Domain.Entities.App
         public DateTime DatumIzrade { get; set; }
         public string PrikazIme { get; set; }
 
-        public Tim Tim { get; set; }
+
+    public Tim Tim { get; set; }
 
         [JsonIgnore]
         public ICollection<Djelatnost> Djelatnosti { get; set; }

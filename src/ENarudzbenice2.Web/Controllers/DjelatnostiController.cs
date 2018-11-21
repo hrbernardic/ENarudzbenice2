@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DDFramework;
 using ENarudzbenice2.Application.Features.Djelatnosti.Requests;
 using ENarudzbenice2.Domain.Entities;
+using ENarudzbenice2.Persistence;
 using ENarudzbenice2.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,16 +14,29 @@ namespace ENarudzbenice2.Web.Controllers
     [ApiController]
     public class DjelatnostiController : BaseController
     {
-        // GET api/djelatnosti
-        [HttpGet("Query")]
-        public Task<QueryResult<Djelatnost>> Query([FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 0, [FromQuery]string sortProperty = null, [FromQuery]string sortOrder = null)
+        //// GET api/djelatnosti
+        //[HttpGet("Query")]
+        //public Task<QueryResponse<Djelatnost>> Query([FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 0, [FromQuery]string sortProperty = null, [FromQuery]string sortOrder = null)
+        //{
+        //    return Mediator.Send(new DjelatnostQuery.Request
+        //    {
+        //        PageIndex = pageNumber,
+        //        PageSize = pageSize,
+        //        SortProperty = sortProperty,
+        //        SortOrder = sortOrder
+        //    });
+        //}
+
+        [HttpPost("Query")]
+        public Task<QueryResponse<DjelatnostBrowse>> Query([FromBody]QueryRequest queryRequest)
         {
             return Mediator.Send(new DjelatnostQuery.Request
             {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                SortProperty = sortProperty,
-                SortOrder = sortOrder
+                PageIndex = queryRequest.PageIndex,
+                PageSize = queryRequest.PageSize,
+                SortProperty = queryRequest.SortProperty,
+                SortOrder = queryRequest.SortOrder,
+                GlobalFilter = queryRequest.GlobalFilter
             });
         }
 
