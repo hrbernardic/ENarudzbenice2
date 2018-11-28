@@ -14,30 +14,11 @@ namespace ENarudzbenice2.Web.Controllers
     [ApiController]
     public class DjelatnostiController : BaseController
     {
-        //// GET api/djelatnosti
-        //[HttpGet("Query")]
-        //public Task<QueryResponse<Djelatnost>> Query([FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 0, [FromQuery]string sortProperty = null, [FromQuery]string sortOrder = null)
-        //{
-        //    return Mediator.Send(new DjelatnostQuery.Request
-        //    {
-        //        PageIndex = pageNumber,
-        //        PageSize = pageSize,
-        //        SortProperty = sortProperty,
-        //        SortOrder = sortOrder
-        //    });
-        //}
-
+        // POST api/djelatnosti/Query
         [HttpPost("Query")]
-        public Task<QueryResponse<DjelatnostBrowse>> Query([FromBody]QueryRequest queryRequest)
+        public Task<TableQueryResponse<DjelatnostBrowse>> Query([FromBody]TableQueryRequest tableQueryRequest)
         {
-            return Mediator.Send(new DjelatnostQuery.Request
-            {
-                PageIndex = queryRequest.PageIndex,
-                PageSize = queryRequest.PageSize,
-                SortProperty = queryRequest.SortProperty,
-                SortOrder = queryRequest.SortOrder,
-                GlobalFilter = queryRequest.GlobalFilter
-            });
+            return Mediator.Send(new DjelatnostQuery.Request(tableQueryRequest));
         }
 
         // GET api/djelatnosti

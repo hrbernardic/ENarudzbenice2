@@ -14,6 +14,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAdreseClient {
+  query(tableQueryRequest: TableQueryRequest): Observable<TableQueryResponseOfAdresaBrowse | null>;
   getAll(): Observable<Adresa[] | null>;
 }
 
@@ -33,8 +34,78 @@ export class AdreseClient implements IAdreseClient {
     this.baseUrl = baseUrl ? baseUrl : '';
   }
 
+  query(tableQueryRequest: TableQueryRequest): Observable<TableQueryResponseOfAdresaBrowse | null> {
+    let url_ = this.baseUrl + '/api/Adrese/Query';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(tableQueryRequest);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      })
+    };
+
+    return this.http
+      .request('post', url_, options_)
+      .pipe(
+        _observableMergeMap((response_: any) => {
+          return this.processQuery(response_);
+        })
+      )
+      .pipe(
+        _observableCatch((response_: any) => {
+          if (response_ instanceof HttpResponseBase) {
+            try {
+              return this.processQuery(<any>response_);
+            } catch (e) {
+              return <Observable<TableQueryResponseOfAdresaBrowse | null>>(<any>_observableThrow(e));
+            }
+          } else return <Observable<TableQueryResponseOfAdresaBrowse | null>>(<any>_observableThrow(response_));
+        })
+      );
+  }
+
+  protected processQuery(response: HttpResponseBase): Observable<TableQueryResponseOfAdresaBrowse | null> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse
+        ? response.body
+        : (<any>response).error instanceof Blob
+          ? (<any>response).error
+          : undefined;
+
+    let _headers: any = {};
+    if (response.headers) {
+      for (let key of response.headers.keys()) {
+        _headers[key] = response.headers.get(key);
+      }
+    }
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap(_responseText => {
+          let result200: any = null;
+          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+          result200 = resultData200 ? TableQueryResponseOfAdresaBrowse.fromJS(resultData200) : <any>null;
+          return _observableOf(result200);
+        })
+      );
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(
+        _observableMergeMap(_responseText => {
+          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+        })
+      );
+    }
+    return _observableOf<TableQueryResponseOfAdresaBrowse | null>(<any>null);
+  }
+
   getAll(): Observable<Adresa[] | null> {
-    let url_ = this.baseUrl + '/api/Adrese';
+    let url_ = this.baseUrl + '/api/Adrese/GetAll';
     url_ = url_.replace(/[?&]$/, '');
 
     let options_: any = {
@@ -262,7 +333,7 @@ export class AuthClient implements IAuthClient {
 }
 
 export interface IDjelatnostiClient {
-  query(queryRequest: QueryRequest): Observable<QueryResponseOfDjelatnostBrowse | null>;
+  query(tableQueryRequest: TableQueryRequest): Observable<TableQueryResponseOfDjelatnostBrowse | null>;
   getAll(): Observable<Djelatnost[] | null>;
   create(request: Request): Observable<FileResponse>;
   get(id: string): Observable<FileResponse>;
@@ -286,11 +357,11 @@ export class DjelatnostiClient implements IDjelatnostiClient {
     this.baseUrl = baseUrl ? baseUrl : '';
   }
 
-  query(queryRequest: QueryRequest): Observable<QueryResponseOfDjelatnostBrowse | null> {
+  query(tableQueryRequest: TableQueryRequest): Observable<TableQueryResponseOfDjelatnostBrowse | null> {
     let url_ = this.baseUrl + '/api/Djelatnosti/Query';
     url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = JSON.stringify(queryRequest);
+    const content_ = JSON.stringify(tableQueryRequest);
 
     let options_: any = {
       body: content_,
@@ -315,14 +386,14 @@ export class DjelatnostiClient implements IDjelatnostiClient {
             try {
               return this.processQuery(<any>response_);
             } catch (e) {
-              return <Observable<QueryResponseOfDjelatnostBrowse | null>>(<any>_observableThrow(e));
+              return <Observable<TableQueryResponseOfDjelatnostBrowse | null>>(<any>_observableThrow(e));
             }
-          } else return <Observable<QueryResponseOfDjelatnostBrowse | null>>(<any>_observableThrow(response_));
+          } else return <Observable<TableQueryResponseOfDjelatnostBrowse | null>>(<any>_observableThrow(response_));
         })
       );
   }
 
-  protected processQuery(response: HttpResponseBase): Observable<QueryResponseOfDjelatnostBrowse | null> {
+  protected processQuery(response: HttpResponseBase): Observable<TableQueryResponseOfDjelatnostBrowse | null> {
     const status = response.status;
     const responseBlob =
       response instanceof HttpResponse
@@ -342,7 +413,7 @@ export class DjelatnostiClient implements IDjelatnostiClient {
         _observableMergeMap(_responseText => {
           let result200: any = null;
           let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = resultData200 ? QueryResponseOfDjelatnostBrowse.fromJS(resultData200) : <any>null;
+          result200 = resultData200 ? TableQueryResponseOfDjelatnostBrowse.fromJS(resultData200) : <any>null;
           return _observableOf(result200);
         })
       );
@@ -353,7 +424,7 @@ export class DjelatnostiClient implements IDjelatnostiClient {
         })
       );
     }
-    return _observableOf<QueryResponseOfDjelatnostBrowse | null>(<any>null);
+    return _observableOf<TableQueryResponseOfDjelatnostBrowse | null>(<any>null);
   }
 
   getAll(): Observable<Djelatnost[] | null> {
@@ -688,6 +759,157 @@ export class DjelatnostiClient implements IDjelatnostiClient {
   }
 }
 
+export class TableQueryResponseOfAdresaBrowse implements ITableQueryResponseOfAdresaBrowse {
+  pageIndex?: number;
+  pageCount?: number;
+  pageSize?: number;
+  rowCount?: number;
+  results?: AdresaBrowse[] | undefined;
+
+  constructor(data?: ITableQueryResponseOfAdresaBrowse) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+      }
+    }
+  }
+
+  init(data?: any) {
+    if (data) {
+      this.pageIndex = data['pageIndex'];
+      this.pageCount = data['pageCount'];
+      this.pageSize = data['pageSize'];
+      this.rowCount = data['rowCount'];
+      if (data['results'] && data['results'].constructor === Array) {
+        this.results = [];
+        for (let item of data['results']) this.results.push(AdresaBrowse.fromJS(item));
+      }
+    }
+  }
+
+  static fromJS(data: any): TableQueryResponseOfAdresaBrowse {
+    data = typeof data === 'object' ? data : {};
+    let result = new TableQueryResponseOfAdresaBrowse();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    data['pageIndex'] = this.pageIndex;
+    data['pageCount'] = this.pageCount;
+    data['pageSize'] = this.pageSize;
+    data['rowCount'] = this.rowCount;
+    if (this.results && this.results.constructor === Array) {
+      data['results'] = [];
+      for (let item of this.results) data['results'].push(item.toJSON());
+    }
+    return data;
+  }
+}
+
+export interface ITableQueryResponseOfAdresaBrowse {
+  pageIndex?: number;
+  pageCount?: number;
+  pageSize?: number;
+  rowCount?: number;
+  results?: AdresaBrowse[] | undefined;
+}
+
+export class AdresaBrowse implements IAdresaBrowse {
+  id?: string;
+  naziv?: string | undefined;
+  sifra?: number;
+
+  constructor(data?: IAdresaBrowse) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+      }
+    }
+  }
+
+  init(data?: any) {
+    if (data) {
+      this.id = data['id'];
+      this.naziv = data['naziv'];
+      this.sifra = data['sifra'];
+    }
+  }
+
+  static fromJS(data: any): AdresaBrowse {
+    data = typeof data === 'object' ? data : {};
+    let result = new AdresaBrowse();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    data['id'] = this.id;
+    data['naziv'] = this.naziv;
+    data['sifra'] = this.sifra;
+    return data;
+  }
+}
+
+export interface IAdresaBrowse {
+  id?: string;
+  naziv?: string | undefined;
+  sifra?: number;
+}
+
+export class TableQueryRequest implements ITableQueryRequest {
+  pageSize?: number;
+  pageIndex?: number;
+  sortProperty?: string | undefined;
+  sortOrder?: string | undefined;
+  globalFilter?: string | undefined;
+
+  constructor(data?: ITableQueryRequest) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+      }
+    }
+  }
+
+  init(data?: any) {
+    if (data) {
+      this.pageSize = data['pageSize'];
+      this.pageIndex = data['pageIndex'];
+      this.sortProperty = data['sortProperty'];
+      this.sortOrder = data['sortOrder'];
+      this.globalFilter = data['globalFilter'];
+    }
+  }
+
+  static fromJS(data: any): TableQueryRequest {
+    data = typeof data === 'object' ? data : {};
+    let result = new TableQueryRequest();
+    result.init(data);
+    return result;
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {};
+    data['pageSize'] = this.pageSize;
+    data['pageIndex'] = this.pageIndex;
+    data['sortProperty'] = this.sortProperty;
+    data['sortOrder'] = this.sortOrder;
+    data['globalFilter'] = this.globalFilter;
+    return data;
+  }
+}
+
+export interface ITableQueryRequest {
+  pageSize?: number;
+  pageIndex?: number;
+  sortProperty?: string | undefined;
+  sortOrder?: string | undefined;
+  globalFilter?: string | undefined;
+}
+
 export class BaseEntity implements IBaseEntity {
   id?: string;
 
@@ -920,13 +1142,14 @@ export interface IUserLoginCommand {
   password?: string | undefined;
 }
 
-export class QueryParametersBase implements IQueryParametersBase {
+export class TableQueryResponseOfDjelatnostBrowse implements ITableQueryResponseOfDjelatnostBrowse {
   pageIndex?: number;
   pageCount?: number;
   pageSize?: number;
   rowCount?: number;
+  results?: DjelatnostBrowse[] | undefined;
 
-  constructor(data?: IQueryParametersBase) {
+  constructor(data?: ITableQueryResponseOfDjelatnostBrowse) {
     if (data) {
       for (var property in data) {
         if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -940,12 +1163,16 @@ export class QueryParametersBase implements IQueryParametersBase {
       this.pageCount = data['pageCount'];
       this.pageSize = data['pageSize'];
       this.rowCount = data['rowCount'];
+      if (data['results'] && data['results'].constructor === Array) {
+        this.results = [];
+        for (let item of data['results']) this.results.push(DjelatnostBrowse.fromJS(item));
+      }
     }
   }
 
-  static fromJS(data: any): QueryParametersBase {
+  static fromJS(data: any): TableQueryResponseOfDjelatnostBrowse {
     data = typeof data === 'object' ? data : {};
-    let result = new QueryParametersBase();
+    let result = new TableQueryResponseOfDjelatnostBrowse();
     result.init(data);
     return result;
   }
@@ -956,53 +1183,19 @@ export class QueryParametersBase implements IQueryParametersBase {
     data['pageCount'] = this.pageCount;
     data['pageSize'] = this.pageSize;
     data['rowCount'] = this.rowCount;
-    return data;
-  }
-}
-
-export interface IQueryParametersBase {
-  pageIndex?: number;
-  pageCount?: number;
-  pageSize?: number;
-  rowCount?: number;
-}
-
-export class QueryResponseOfDjelatnostBrowse extends QueryParametersBase implements IQueryResponseOfDjelatnostBrowse {
-  results?: DjelatnostBrowse[] | undefined;
-
-  constructor(data?: IQueryResponseOfDjelatnostBrowse) {
-    super(data);
-  }
-
-  init(data?: any) {
-    super.init(data);
-    if (data) {
-      if (data['results'] && data['results'].constructor === Array) {
-        this.results = [];
-        for (let item of data['results']) this.results.push(DjelatnostBrowse.fromJS(item));
-      }
-    }
-  }
-
-  static fromJS(data: any): QueryResponseOfDjelatnostBrowse {
-    data = typeof data === 'object' ? data : {};
-    let result = new QueryResponseOfDjelatnostBrowse();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
     if (this.results && this.results.constructor === Array) {
       data['results'] = [];
       for (let item of this.results) data['results'].push(item.toJSON());
     }
-    super.toJSON(data);
     return data;
   }
 }
 
-export interface IQueryResponseOfDjelatnostBrowse extends IQueryParametersBase {
+export interface ITableQueryResponseOfDjelatnostBrowse {
+  pageIndex?: number;
+  pageCount?: number;
+  pageSize?: number;
+  rowCount?: number;
   results?: DjelatnostBrowse[] | undefined;
 }
 
@@ -1051,57 +1244,6 @@ export interface IDjelatnostBrowse {
   naziv?: string | undefined;
   sifra?: number;
   radnikPrikazIme?: string | undefined;
-}
-
-export class QueryRequest implements IQueryRequest {
-  pageSize?: number;
-  pageIndex?: number;
-  sortProperty?: string | undefined;
-  sortOrder?: string | undefined;
-  globalFilter?: string | undefined;
-
-  constructor(data?: IQueryRequest) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
-    }
-  }
-
-  init(data?: any) {
-    if (data) {
-      this.pageSize = data['pageSize'];
-      this.pageIndex = data['pageIndex'];
-      this.sortProperty = data['sortProperty'];
-      this.sortOrder = data['sortOrder'];
-      this.globalFilter = data['globalFilter'];
-    }
-  }
-
-  static fromJS(data: any): QueryRequest {
-    data = typeof data === 'object' ? data : {};
-    let result = new QueryRequest();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['pageSize'] = this.pageSize;
-    data['pageIndex'] = this.pageIndex;
-    data['sortProperty'] = this.sortProperty;
-    data['sortOrder'] = this.sortOrder;
-    data['globalFilter'] = this.globalFilter;
-    return data;
-  }
-}
-
-export interface IQueryRequest {
-  pageSize?: number;
-  pageIndex?: number;
-  sortProperty?: string | undefined;
-  sortOrder?: string | undefined;
-  globalFilter?: string | undefined;
 }
 
 export class Djelatnost extends SifarnikEntity implements IDjelatnost {

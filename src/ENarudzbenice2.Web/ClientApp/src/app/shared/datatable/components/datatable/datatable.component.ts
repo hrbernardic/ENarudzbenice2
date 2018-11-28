@@ -18,7 +18,7 @@ import { tutorialAnimation } from '../../animations/tutorial-animation';
 import { fadeInFadeOutAnimation } from '../../animations/fadein-fadeout-animation';
 import { tap } from 'rxjs/internal/operators/tap';
 import { merge } from 'rxjs/internal/observable/merge';
-import { QueryRequest } from '@app/shared/enarudzbenice2-api';
+import { TableQueryRequest } from '@app/shared/enarudzbenice2-api';
 import { fromEvent } from 'rxjs/internal/observable/fromEvent';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -53,7 +53,7 @@ export class DatatableComponent implements OnInit, AfterContentInit, AfterViewIn
   ngOnInit() {
     this.dataSource = new GenericDatasource(this.dataService, this.paginator, this.sort);
     this.dataSource.loadData(
-      new QueryRequest({
+      new TableQueryRequest({
         pageIndex: 0,
         pageSize: 10,
         sortProperty: '',
@@ -66,7 +66,7 @@ export class DatatableComponent implements OnInit, AfterContentInit, AfterViewIn
   ngAfterViewInit() {
     fromEvent(this.globalFilterInput.nativeElement, 'keyup')
       .pipe(
-        debounceTime(150),
+        debounceTime(250),
         distinctUntilChanged(),
         tap(() => {
           this.paginator.pageIndex = 0;
@@ -83,12 +83,13 @@ export class DatatableComponent implements OnInit, AfterContentInit, AfterViewIn
   }
 
   ngAfterContentInit() {
-    this.displayedColumns = this.columns.map(c => c.prop);
+    this.displayedColumns = ['actions', ...this.columns.map(c => c.prop)];
+    // this.displayedColumns.unshift('actions');
   }
 
   loadData() {
     this.dataSource.loadData(
-      new QueryRequest({
+      new TableQueryRequest({
         pageIndex: this.paginator.pageIndex,
         pageSize: this.paginator.pageSize,
         sortProperty: this.sort.active,

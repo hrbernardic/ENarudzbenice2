@@ -12,7 +12,42 @@
     "application/*+json"
   ],
   "paths": {
-    "/api/Adrese": {
+    "/api/Adrese/Query": {
+      "post": {
+        "tags": ["Adrese"],
+        "operationId": "Adrese_Query",
+        "requestBody": {
+          "x-name": "tableQueryRequest",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TableQueryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/TableQueryResponseOfAdresaBrowse"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Adrese/GetAll": {
       "get": {
         "tags": ["Adrese"],
         "operationId": "Adrese_GetAll",
@@ -104,11 +139,11 @@
         "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Query",
         "requestBody": {
-          "x-name": "queryRequest",
+          "x-name": "tableQueryRequest",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/QueryRequest"
+                "$ref": "#/components/schemas/TableQueryRequest"
               }
             }
           },
@@ -124,7 +159,7 @@
                   "nullable": true,
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/QueryResponseOfDjelatnostBrowse"
+                      "$ref": "#/components/schemas/TableQueryResponseOfDjelatnostBrowse"
                     }
                   ]
                 }
@@ -285,6 +320,79 @@
   },
   "components": {
     "schemas": {
+      "TableQueryResponseOfAdresaBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AdresaBrowse"
+            }
+          }
+        }
+      },
+      "AdresaBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "naziv": {
+            "type": "string",
+            "nullable": true
+          },
+          "sifra": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TableQueryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sortProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "string",
+            "nullable": true
+          },
+          "globalFilter": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Adresa": {
         "allOf": [
           {
@@ -385,49 +493,7 @@
           }
         }
       },
-      "QueryResponseOfDjelatnostBrowse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/QueryParametersBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "results": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/DjelatnostBrowse"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "DjelatnostBrowse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "naziv": {
-            "type": "string",
-            "nullable": true
-          },
-          "sifra": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "radnikPrikazIme": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "QueryParametersBase": {
+      "TableQueryResponseOfDjelatnostBrowse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -446,30 +512,33 @@
           "rowCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/DjelatnostBrowse"
+            }
           }
         }
       },
-      "QueryRequest": {
+      "DjelatnostBrowse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
+          "id": {
+            "type": "string",
+            "format": "guid"
           },
-          "pageIndex": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sortProperty": {
+          "naziv": {
             "type": "string",
             "nullable": true
           },
-          "sortOrder": {
-            "type": "string",
-            "nullable": true
+          "sifra": {
+            "type": "integer",
+            "format": "int32"
           },
-          "globalFilter": {
+          "radnikPrikazIme": {
             "type": "string",
             "nullable": true
           }

@@ -15,6 +15,7 @@ namespace ENarudzbenice2.Persistence
 
         public DbSet<Djelatnost> Djelatnosti { get; set; }
         public DbQuery<DjelatnostBrowse> DjelatnostiBrowse { get; set; }
+        public DbQuery<AdresaBrowse> AdreseBrowse { get; set; }
         public DbSet<Adresa> Adrese { get; set; }
         public DbSet<Lokacija> Lokacije { get; set; }
         public DbSet<Tim> Timovi { get; set; }
@@ -26,6 +27,12 @@ namespace ENarudzbenice2.Persistence
 
             modelBuilder.ApplyAllConfigurations();
         }
+
+        [DbFunction("dd_integerLike", "dbo")]
+        public static bool IntegerLike(int value, string filter)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class DjelatnostBrowse
@@ -34,5 +41,12 @@ namespace ENarudzbenice2.Persistence
         public string Naziv { get; set; }
         public int Sifra { get; set; }
         public string RadnikPrikazIme { get; set; }
+    }
+
+    public class AdresaBrowse
+    {
+        public Guid Id { get; set; }
+        public string Naziv { get; set; }
+        public int Sifra { get; set; }
     }
 }
