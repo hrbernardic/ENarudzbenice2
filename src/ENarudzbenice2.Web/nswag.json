@@ -98,7 +98,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "ClientApp/src/app/shared/enarudzbenice2-api.ts"
+      "output": "ClientApp/apps/enarudzbenice2-web/en2-web/src/app/enarudzbenice2-api.ts"
     }
   }
 }
