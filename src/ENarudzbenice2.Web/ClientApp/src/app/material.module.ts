@@ -7,6 +7,7 @@
  */
 
 import { NgModule } from '@angular/core';
+
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -28,7 +29,6 @@ import {
   MatMenuModule,
   MatNativeDateModule,
   MatOptionModule,
-  MatPaginatorModule,
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatPseudoCheckboxModule,
@@ -44,7 +44,8 @@ import {
   MatTableModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 @NgModule({

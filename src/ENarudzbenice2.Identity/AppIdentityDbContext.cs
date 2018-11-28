@@ -19,7 +19,12 @@ namespace ENarudzbenice2.Identity
             base.OnModelCreating(builder);
 
             builder.Entity<Claim>(claim => { claim.ToTable("Claims", "App"); });
-            builder.Entity<User>(user => { user.ToTable("Users", "App"); });
+            builder.Entity<User>(user =>
+            {
+                user.ToTable("Users", "App");
+
+                user.Property(u => u.PrikazIme).HasComputedColumnSql("[Ime] + ' ' + [Prezime]");
+            });
             builder.Entity<Role>(user => { user.ToTable("Roles", "App"); });
             builder.Entity<UserClaim>(user => { user.ToTable("UserClaims", "App"); });
             builder.Entity<UserLogin>(user => { user.ToTable("UserLogins", "App"); });

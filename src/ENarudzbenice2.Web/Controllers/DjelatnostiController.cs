@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DDFramework;
 using ENarudzbenice2.Application.Features.Djelatnosti.Requests;
 using ENarudzbenice2.Domain.Entities;
+using ENarudzbenice2.Persistence;
 using ENarudzbenice2.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +14,13 @@ namespace ENarudzbenice2.Web.Controllers
     [ApiController]
     public class DjelatnostiController : BaseController
     {
+        // POST api/djelatnosti/Query
+        [HttpPost("Query")]
+        public Task<TableQueryResponse<DjelatnostBrowse>> Query([FromBody]TableQueryRequest tableQueryRequest)
+        {
+            return Mediator.Send(new DjelatnostQuery.Request(tableQueryRequest));
+        }
+
         // GET api/djelatnosti
         [HttpGet]
         public Task<List<Djelatnost>> GetAll()

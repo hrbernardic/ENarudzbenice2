@@ -1,26 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-
-import { environment } from '@env/environment';
+import { Component } from '@angular/core';
 import { AdreseClient, Adresa } from '@app/shared';
 import { Observable } from 'rxjs/internal/Observable';
-import { DataSource } from '@angular/cdk/table';
 
 @Component({
-  selector: 'app-adrese',
+  selector: 'en2-adrese',
   templateUrl: './adrese.component.html',
   styleUrls: ['./adrese.component.scss']
 })
-export class AdreseComponent implements OnInit {
-  version: string = environment.version;
-  adrese: Adresa[];
-  displayedColumns: string[] = ['sifra', 'naziv'];
-  dataSource: any;
-
-  constructor(adreseClient: AdreseClient) {
-    adreseClient.getAll().subscribe(adrese => {
-      this.dataSource = adrese;
-    });
+export class AdreseComponent {
+  constructor(public adreseClient: AdreseClient) {
+    // this.adrese = this.adreseClient.getAll();
   }
 
-  ngOnInit() {}
+  addItem() {
+    console.log('Add Item');
+  }
+
+  editItem(element: Adresa) {
+    console.log('Edit Item: ' + element.id);
+  }
+
+  deleteItem(element: Adresa) {
+    console.log('Delete Item: ' + element.id);
+  }
 }

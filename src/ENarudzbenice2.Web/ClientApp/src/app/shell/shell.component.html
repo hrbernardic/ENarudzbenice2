@@ -1,11 +1,34 @@
 <div fxFlex>
+
+<mat-toolbar color="primary" class="main-toolbar mat-elevation-z5" fxLayout="row">
+    <button class="menu-button" mat-icon-button (click)="sidenav.toggle()" fxHide.gt-sm>
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="logo">E-Narudžbenice 2</span>
+    <span class="userDisplayName" fxHide fxShow.gt-sm>{{userDisplayName}}</span>
+    <div class="userMenuIcon">
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>person</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <mat-list>
+          <mat-list-item>
+            <span>Prijavljen kao</span>&nbsp;<b>{{username}}</b>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-list>
+        <button mat-menu-item (click)="logout()">Odjava</button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+
   <mat-sidenav-container fxFill>
     <mat-sidenav #sidenav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" [disableClose]="!isMobile"
                  ngClass.gt-sm="has-border">
-      <mat-toolbar color="primary" class="logo mat-elevation-z5">
+      <!-- <mat-toolbar color="primary" class="logo mat-elevation-z5">
         <span>E-Narudžbenice 2</span>
         <div fxFlex></div>
-      </mat-toolbar>
+      </mat-toolbar> -->
       <nav>
         <mat-list>
 
@@ -43,7 +66,7 @@
               </a>
 
               <!--  Djelatnosti -->
-              <a mat-list-item routerLink="/Djelatnosti" routerLinkActive="active" (click)="isMobile && sidenav.close()" class="sidenavExpansionItem">
+              <a mat-list-item routerLink="/djelatnosti" routerLinkActive="active" (click)="isMobile && sidenav.close()" class="sidenavExpansionItem">
                 <span class="menuItemLabel">Djelatnosti</span>
               </a>
 
@@ -52,9 +75,6 @@
                 <span class="menuItemLabel">Vrste narudžbenica</span>
               </a>
             </mat-list>
-
-
-
           </mat-expansion-panel>
 
           <!-- ADMINISTRACIJA -->
@@ -73,7 +93,7 @@
       </nav>
     </mat-sidenav>
     <mat-sidenav-content>
-      <mat-toolbar color="primary" class="mat-elevation-z5">
+      <!-- <mat-toolbar color="primary" class="main-toolbar mat-elevation-z5">
         <button class="menu-button" mat-icon-button (click)="sidenav.toggle()" fxHide.gt-sm>
           <mat-icon>menu</mat-icon>
         </button>
@@ -93,7 +113,7 @@
             <button mat-menu-item (click)="logout()">Odjava</button>
           </mat-menu>
         </div>
-      </mat-toolbar>
+      </mat-toolbar> -->
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

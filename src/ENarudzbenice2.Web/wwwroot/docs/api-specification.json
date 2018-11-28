@@ -12,11 +12,44 @@
     "application/*+json"
   ],
   "paths": {
-    "/api/Adrese": {
+    "/api/Adrese/Query": {
+      "post": {
+        "tags": ["Adrese"],
+        "operationId": "Adrese_Query",
+        "requestBody": {
+          "x-name": "tableQueryRequest",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TableQueryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/TableQueryResponseOfAdresaBrowse"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Adrese/GetAll": {
       "get": {
-        "tags": [
-          "Adrese"
-        ],
+        "tags": ["Adrese"],
         "operationId": "Adrese_GetAll",
         "responses": {
           "200": {
@@ -38,9 +71,7 @@
     },
     "/api/Auth/CreateUser": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "operationId": "Auth_CreateUser",
         "requestBody": {
           "x-name": "command",
@@ -70,9 +101,7 @@
     },
     "/api/Auth/Login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "operationId": "Auth_Login",
         "requestBody": {
           "x-name": "command",
@@ -105,11 +134,44 @@
         }
       }
     },
+    "/api/Djelatnosti/Query": {
+      "post": {
+        "tags": ["Djelatnosti"],
+        "operationId": "Djelatnosti_Query",
+        "requestBody": {
+          "x-name": "tableQueryRequest",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TableQueryRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/TableQueryResponseOfDjelatnostBrowse"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Djelatnosti": {
       "get": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_GetAll",
         "responses": {
           "200": {
@@ -129,9 +191,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Create",
         "requestBody": {
           "x-name": "request",
@@ -161,9 +221,7 @@
     },
     "/api/Djelatnosti/{id}": {
       "get": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Get",
         "parameters": [
           {
@@ -191,9 +249,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Update",
         "parameters": [
           {
@@ -233,9 +289,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Djelatnosti"
-        ],
+        "tags": ["Djelatnosti"],
         "operationId": "Djelatnosti_Delete",
         "parameters": [
           {
@@ -266,6 +320,79 @@
   },
   "components": {
     "schemas": {
+      "TableQueryResponseOfAdresaBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AdresaBrowse"
+            }
+          }
+        }
+      },
+      "AdresaBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "naziv": {
+            "type": "string",
+            "nullable": true
+          },
+          "sifra": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TableQueryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sortProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "string",
+            "nullable": true
+          },
+          "globalFilter": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Adresa": {
         "allOf": [
           {
@@ -361,6 +488,57 @@
             "nullable": true
           },
           "password": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "TableQueryResponseOfDjelatnostBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/DjelatnostBrowse"
+            }
+          }
+        }
+      },
+      "DjelatnostBrowse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "naziv": {
+            "type": "string",
+            "nullable": true
+          },
+          "sifra": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "radnikPrikazIme": {
             "type": "string",
             "nullable": true
           }
