@@ -16,6 +16,9 @@
     ],
     "baseUrl": ".",
     "paths": {
+      // TODO : fix @xxx problems !!
+      "@en2/*": ["apps/enarudzbenice2-web/en2-web/src/app/*"],
+      "@env/*": ["apps/enarudzbenice2-web/en2-web/src/environments/*"]
     }
   },
   "exclude": [
