@@ -1,4 +1,4 @@
-<en2-top-nav class="fixed-topnav" fxHide.gt-xs></en2-top-nav>
+<!-- <en2-top-nav class="fixed-topnav" fxHide.gt-xs></en2-top-nav>
 <mat-sidenav-container>
   <mat-sidenav #appDrawer mode="over" opened="false">
     <mat-nav-list>
@@ -7,5 +7,16 @@
   </mat-sidenav>
   <en2-top-nav fxHide.xs></en2-top-nav>
   <router-outlet></router-outlet>
-</mat-sidenav-container>
+</mat-sidenav-container> -->
+<!-- <mat-toolbar color="primary" class="example-toolbar">
+	<button mat-icon-button (click)="isExpanded = !isExpanded"><mat-icon>menu</mat-icon></button>
+	<h1 class="example-app-name">Nested Menus</h1>
+</mat-toolbar> -->
+<en2-side-nav [items]="navItems" [isExpanded]="isExpanded">
+  <router-outlet></router-outlet>
+</en2-side-nav>
+
+<div fxFlex>
+
+</div>
 

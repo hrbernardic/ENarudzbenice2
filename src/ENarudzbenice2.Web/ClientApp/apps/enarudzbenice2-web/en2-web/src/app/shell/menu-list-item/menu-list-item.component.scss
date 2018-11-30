@@ -1,4 +1,5 @@
 @import '../../../theme/theme-variables.scss';
+@import '../../../theme/variables.scss';
 
 :host {
   display: flex;
@@ -21,8 +22,11 @@
   padding: 8px 0;
   display: flex;
   width: auto;
+  color: $secondary-text-color;
 
   .routeIcon {
     margin-right: 40px;
   }
 }
+
+

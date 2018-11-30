@@ -11,16 +11,67 @@ import { NavService } from './nav.service';
   styleUrls: ['./shell.component.scss']
 })
 export class ShellComponent implements OnInit, AfterViewInit {
-  @ViewChild('appDrawer') appDrawer: ElementRef;
+  public isExpanded = true;
   navItems: NavItem[] = [
     {
-      displayName: 'Home',
+      displayName: 'Početna',
       iconName: 'home',
       route: 'Home',
       children: []
     },
     {
-      displayName: 'Test',
+      displayName: 'novi',
+      iconName: 'add',
+      route: 'Home2',
+      children: [
+        {
+          displayName: 'dijete',
+          iconName: 'edit',
+          route: 'Home2',
+          children: []
+        }
+      ]
+    },
+    {
+      displayName: 'Narudžbenice',
+      iconName: 'library_books',
+      route: 'Narudzbenice',
+      children: [
+        {
+          displayName: 'Pregled',
+          iconName: 'view_list',
+          route: 'Narudzbenice/Pregled',
+          children: []
+        },
+        {
+          displayName: 'Predlošci',
+          iconName: 'line_style',
+          route: 'Narudzbenice/Predlošci',
+          children: []
+        },
+      ]
+    },
+    {
+      displayName: 'Šifrarnici',
+      iconName: 'list',
+      route: 'Sifrarnici',
+      children: [
+        {
+          displayName: 'Adrese',
+          iconName: 'place',
+          route: 'Sifrarnici/Adrese',
+          children: []
+        },
+        {
+          displayName: 'Djelatnosti',
+          iconName: 'gavel',
+          route: 'Sifrarnici/Djelatnosti',
+          children: []
+        },
+      ]
+    },
+    {
+      displayName: 'Upute za uporabu',
       iconName: 'edit',
       route: 'Test',
       children: []
@@ -31,14 +82,14 @@ export class ShellComponent implements OnInit, AfterViewInit {
     private router: Router,
     private media: ObservableMedia,
     private authenticationService: AuthenticationService,
-    private navService: NavService
+    // private navService: NavService
   ) { }
 
   ngOnInit() {
   }
 
   ngAfterViewInit() {
-    this.navService.appDrawer = this.appDrawer;
+    // this.navService.appDrawer = this.appDrawer;
   }
 
   logout() {
