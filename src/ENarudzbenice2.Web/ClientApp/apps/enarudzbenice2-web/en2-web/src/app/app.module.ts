@@ -10,7 +10,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core';
 import { HomeModule } from './home/home.module';
 import { ShellModule } from './shell/shell.module';
-import { TestRouteModule } from './test-route/test-route.module';
+import { LoginModule } from './login/login.module';
+import { DjelatnostiModule } from './djelatnosti/djelatnosti.module';
+import { AdreseModule } from './adrese/adrese.module';
+import { SharedModule } from './shared/shared.module';
 
 
 @NgModule({
@@ -24,7 +27,10 @@ import { TestRouteModule } from './test-route/test-route.module';
     CoreModule,
     HomeModule,
     ShellModule,
-    TestRouteModule,
+    LoginModule,
+    DjelatnostiModule,
+    AdreseModule,
+    SharedModule,
     AppRoutingModule
   ],
   providers: [],

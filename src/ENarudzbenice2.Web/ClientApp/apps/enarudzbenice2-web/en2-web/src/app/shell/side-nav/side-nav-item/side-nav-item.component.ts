@@ -26,7 +26,7 @@ export class SideNavItemComponent implements OnInit {
 
   @Output() routeChanged: EventEmitter<any> = new EventEmitter();
 
-  constructor(private router: Router, private navService: NavService) {
+  constructor(public router: Router, private navService: NavService) {
     this.depth = this.depth === undefined ? 0 : this.depth;
    }
 

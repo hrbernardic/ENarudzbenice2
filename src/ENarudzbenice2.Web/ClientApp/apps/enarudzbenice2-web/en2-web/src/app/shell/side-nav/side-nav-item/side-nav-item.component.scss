@@ -1,17 +1,20 @@
 @import '../../../../theme/theme-variables.scss';
+@import '../../../../theme/variables.scss';
 
 .menu-list-item-content {
   display: flex;
   align-items: center;
   width: 100%;
+  color: $sidenav-text-color;
 }
 
 .menu-list-item-content-icon {
-  font-size: 21px;
+  font-size: 20px;
+    margin-top: 4px;
 }
 
 .menu-list-item-content-text {
-  font-size: 12.4px;
+  font-size: 12.2px;
   margin-left: 15px;
 }
 

@@ -1,19 +1,39 @@
 <mat-sidenav-container class="container" autosize>
-  <mat-toolbar color="primary" class="example-toolbar">
-    <button mat-icon-button (click)="isExpanded = !isExpanded"><mat-icon>menu</mat-icon></button>
-    <h1 *ngIf="isMobile || !isExpanded" class="example-app-name">E-Narudzbenice 2</h1>
-  </mat-toolbar>
   <mat-sidenav class="sidenav mat-elevation-z1" [mode]="isMobile ? 'over' : 'side'" [opened]="isExpanded">
-    <mat-toolbar color="primary">
-      <h1>E-Narudzbenice 2</h1>
+    <mat-toolbar color="primary" class="toolbar">
+      <!-- <button mat-icon-button *ngIf="!isMobile" (click)="menuButtonClick()"><mat-icon  class="close-menu-icon">arrow_back_ios</mat-icon></button> -->
+      <h1 class="app-name"> E-Narudzbenice 2</h1>
     </mat-toolbar>
 		<mat-nav-list>
-			<en2-side-nav-item *ngFor="let item of items" [item]="item" (routeChanged)="routeChanged($event)"></en2-side-nav-item>
-		</mat-nav-list>
-	</mat-sidenav>
-
-	<div class="example-sidenav-content">
-		<ng-content></ng-content>
-	</div>
-
+      <en2-side-nav-item *ngFor="let item of items" [item]="item" (routeChanged)="routeChanged($event)"></en2-side-nav-item>
+    </mat-nav-list>
+    <mat-divider class="bottomSidenav"></mat-divider>
+    <div class="bottomSidenav">
+      <button mat-icon-button *ngIf="!isMobile" (click)="menuButtonClick()"><mat-icon  class="close-menu-icon">first_page</mat-icon></button>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="main-toolbar toolbar">
+      <button mat-icon-button *ngIf="isMobile || !isExpanded" (click)="menuButtonClick()"><mat-icon>menu</mat-icon></button>
+      <div class="fill-space"></div>
+      <span class="userDisplayName" fxHide fxShow.gt-sm>{{userDisplayName}}</span>
+      <div class="userMenuIcon">
+        <button mat-icon-button [matMenuTriggerFor]="userMenu">
+          <mat-icon>person</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <mat-list>
+            <mat-list-item>
+              <span>Prijavljen kao</span>&nbsp;<b>{{username}}</b>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          </mat-list>
+          <button mat-menu-item (click)="logout()">Odjava</button>
+        </mat-menu>
+      </div>
+    </mat-toolbar>
+    <div class="sidenav-content">
+      <ng-content></ng-content>
+    </div>
+  </mat-sidenav-content>
 </mat-sidenav-container>

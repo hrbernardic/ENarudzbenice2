@@ -20,38 +20,6 @@ export class ShellComponent implements OnInit, AfterViewInit {
       children: []
     },
     {
-      displayName: 'novi',
-      iconName: 'add',
-      route: 'Home2',
-      children: [
-        {
-          displayName: 'dijete',
-          iconName: 'edit',
-          route: 'Home2',
-          children: []
-        }
-      ]
-    },
-    {
-      displayName: 'Narudžbenice',
-      iconName: 'library_books',
-      route: 'Narudzbenice',
-      children: [
-        {
-          displayName: 'Pregled',
-          iconName: 'view_list',
-          route: 'Narudzbenice/Pregled',
-          children: []
-        },
-        {
-          displayName: 'Predlošci',
-          iconName: 'line_style',
-          route: 'Narudzbenice/Predlošci',
-          children: []
-        },
-      ]
-    },
-    {
       displayName: 'Šifrarnici',
       iconName: 'list',
       route: 'Sifrarnici',
@@ -64,16 +32,16 @@ export class ShellComponent implements OnInit, AfterViewInit {
         },
         {
           displayName: 'Djelatnosti',
-          iconName: 'gavel',
+          iconName: 'business_center',
           route: 'Sifrarnici/Djelatnosti',
           children: []
         },
       ]
     },
     {
-      displayName: 'Upute za uporabu',
-      iconName: 'edit',
-      route: 'Test',
+      displayName: 'Adrese',
+      iconName: 'place',
+      route: 'Adrese',
       children: []
     }
   ]

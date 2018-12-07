@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "swaggerGenerator": {
     "aspNetCoreToSwagger": {
-      "project": "ENArudzbenice2.Web.csproj",
+      "project": "ENarudzbenice2.Web.csproj",
       "msBuildProjectExtensionsPath": null,
       "configuration": null,
       "runtime": null,

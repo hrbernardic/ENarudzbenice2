@@ -13,10 +13,8 @@
 	<h1 class="example-app-name">Nested Menus</h1>
 </mat-toolbar> -->
 <en2-side-nav [items]="navItems" [isExpanded]="isExpanded">
-  <router-outlet></router-outlet>
+  <div class="content-outlet mat-typography">
+    <router-outlet></router-outlet>
+  </div>
 </en2-side-nav>
-
-<div fxFlex>
-
-</div>
 
